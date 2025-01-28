@@ -409,3 +409,41 @@ In *Milestone 8, we’ll build a **reusable card component* and design a *homepa
 - Use *grid* or *flexbox* for a neat arrangement of cards.
 
 ---
+
+
+## **Milestone 9: Product Form Creation**  
+
+---  
+
+## 🎯 **Goals**  
+- Create a **frontend form** for taking product input.  
+- Add functionality to upload **multiple images** for a product.  
+
+---  
+
+## **Why Create a Product Form?**  
+- **Collect Product Details**: Capture all necessary product information like name, price, and description.  
+- **Database Storage**: These details will be stored in the database.  
+- **Product Display**: Data will be displayed on the product homepage created in the previous milestone.  
+
+---  
+
+## **Steps**  
+
+### 1. **Create the Form for Products**  
+- Design a form to collect:  
+  - Product Name  
+  - Description  
+  - Price  
+  - Images  
+
+### 2. **Handle Multiple Images**  
+- Add functionality to allow uploading multiple product images.  
+- Use `<input type="file" multiple>` for this purpose.  
+
+---  
+
+### 📝 **Note:**  
+Feel free to experiment with features like:  
+- Adding **admin access** to restrict product uploads.  
+- Allowing only users with a **shop profile** to upload products.  

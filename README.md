@@ -447,3 +447,52 @@ In *Milestone 8, we’ll build a **reusable card component* and design a *homepa
 Feel free to experiment with features like:  
 - Adding **admin access** to restrict product uploads.  
 - Allowing only users with a **shop profile** to upload products.  
+
+## **Milestone 10: Product Schema and Endpoint Creation**  
+
+---  
+
+## 🎯 **Goals**  
+- Define a **Mongoose schema** for storing product data.  
+- Implement **API endpoint** for adding products to MongoDB.  
+- Ensure **data validation** and **error handling** for integrity.  
+
+---  
+
+## **Why Create a Product Schema and API?**  
+- **Structured Data Storage**: Organize product details in MongoDB.  
+- **Validation & Security**: Prevent invalid data entries.  
+- **Scalability**: Enable future expansions like categories and stock tracking.  
+
+---  
+
+## **Steps**  
+
+### 1. **Define Mongoose Schema**  
+- Create a schema with necessary fields:  
+  - **name** (*String, required*)  
+  - **description** (*String, optional*)  
+  - **price** (*Number, required, positive values only*)  
+  - **imageUrl** (*String, optional, URL format validation*)  
+- Use **Mongoose models** to interact with MongoDB.  
+
+### 2. **Build API Endpoint**  
+- Create a **POST** endpoint (`/api/products`) to store product data.  
+- Implement **request validation** before database storage.  
+- Use `express-validator` for additional validation.  
+
+### 3. **Handle Errors & Maintain Data Integrity**  
+- Validate incoming requests and return meaningful errors.  
+- Ensure only **properly formatted data** is stored.  
+
+---  
+
+### 📝 **Next Steps:**  
+- Implement **role-based access control (RBAC)** for product uploads.  
+- Expand schema to include **categories, stock status, and user-specific listings**.  
+
+---  
+
+## **Submission Details**  
+- Code **pushed to GitHub repository**.  
+- Repository is **publicly accessible**.  

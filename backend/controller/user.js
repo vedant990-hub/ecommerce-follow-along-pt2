@@ -4,7 +4,7 @@ const path = require("path")
 const fs = require("fs");
 
 const router = express.Router();
-const {upload} = require("../middleware/multer");
+const {upload} = require("../multer");
 const ErrorHandler = require("../utils/ErrorHandler");
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
 const jwt = require("jsonwebtoken");
@@ -89,4 +89,4 @@ router.post("/login-user", catchAsyncErrors(async(req, res, next) =>{
 }))
 
 
-module.exports = router; 
+module.exports = router;

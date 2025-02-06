@@ -41,7 +41,7 @@ const CreateProduct = () => {
     formData.append("email", email);
 
     image.forEach((image) => {
-      formData.append("image", image);
+      formData.append("images", image);
     });
 
     const config = {

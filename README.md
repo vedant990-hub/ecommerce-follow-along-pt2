@@ -496,3 +496,75 @@ Feel free to experiment with features like:
 ## **Submission Details**  
 - Code **pushed to GitHub repository**.  
 - Repository is **publicly accessible**.  
+
+## **Milestone 11: Dynamic Home Page with Product Data**  
+
+---  
+
+## 🎯 **Goals**  
+- Implement a **dynamic home page** displaying all products from MongoDB.  
+- Develop a **backend API endpoint** to fetch product data.  
+- Render products **dynamically** on the frontend using a reusable component.  
+
+---  
+
+## **Why Implement a Dynamic Home Page?**  
+- **Real-Time Updates**: Ensures users see the latest products.  
+- **Reusability**: Uses a common product card component.  
+- **Seamless Data Flow**: Fetches and displays data efficiently.  
+
+---  
+
+## **Steps**  
+
+### 1. **Backend API Development**  
+- Created an **API endpoint** to retrieve product data from MongoDB.  
+- Ensured data is **formatted and sent** as a JSON response.  
+
+### 2. **Frontend Data Fetching & Rendering**  
+- Implemented a function to **fetch product data** from the backend.  
+- Passed the received data to the **product card component**.  
+- Integrated product listing into the **home page**.  
+
+---  
+
+### 📝 **Submission Details:**  
+- Code **pushed to GitHub repository**.  
+- Repository is **publicly accessible**.  
+
+---  
+
+## **Milestone 12: "My Products" Page Implementation**  
+
+## 🎯 **Goals**  
+- Develop a **"My Products" page** for users to view their added products.  
+- Create an API endpoint to **fetch user-specific products**.  
+- Dynamically render products using a **reusable component**.  
+
+---  
+
+## **Why Implement a "My Products" Page?**  
+- **Personalized Experience**: Displays user-specific products.  
+- **Improved Accessibility**: Users can manage their product listings easily.  
+- **Optimized API Calls**: Fetches only relevant data based on the user's email.  
+
+---  
+
+## **Steps**  
+
+### 1. **Backend API Development**  
+- Created an API endpoint to **retrieve products based on the user's email**.  
+- Ensured efficient **querying of the products collection**.  
+
+### 2. **Frontend Data Fetching & Display**  
+- Implemented a function to **fetch user-specific products** from the backend.  
+- Updated state to reflect **retrieved products dynamically**.  
+- Used the **existing product card component** for consistent UI.  
+
+---  
+
+### 📝 **Submission Details:**  
+- Code **pushed to GitHub repository**.  
+- Repository is **publicly accessible**.  
+
+This milestone enhances the application by providing users with a **personalized view** of their added products. 🚀

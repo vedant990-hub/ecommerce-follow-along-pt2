@@ -98,7 +98,7 @@ function Login() {
                       id="rememberMe"
                       className="mr-2"
                   />
-                  <label htmlFor="rememberMe" className="text-sm text-gray-900">
+                  <label htmlFor="remember Me" className="text-sm text-gray-900">
                     Remember me
                   </label>
                 </div>
@@ -106,7 +106,6 @@ function Login() {
           </div>
 
 
-          {/* Sign In Button */}
           <button
               type="submit"
               className="w-full py-3 bg-purple-600 text-white font-semibold rounded-lg shadow-md hover:bg-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500"

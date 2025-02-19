@@ -1,13 +1,13 @@
 //eslint-disable-next-line
 
 import React, {useState, useEffect} from "react";
+import {useNavigate} from "react-router-dom";
 import Proptypes from "prop-types";
-import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-export default function Product({_id, name, images, description, price}) {
+export default function Myproduct({name, _id, images, description, price}) {
     const [currentIndex, setCurrentIndex] = useState(0);
     const navigate = useNavigate();
-
     useEffect(() => {
         if(!images || images.length === 0) return;
         const interval = setInterval (() => {
@@ -17,6 +17,25 @@ export default function Product({_id, name, images, description, price}) {
     }, [images]);
 
     const currentImage = images.length > 0 ?images[currentIndex]: null;
+
+    const handleEdit = () => {
+        navigate(`/product/${_id}`);
+    }
+
+    const handleDelete = async () => {
+        try{
+            const response=await axios.delete(
+                `http://localhost:8000/api/v2/product/delete-product/${_id}`
+            );
+            if(response.status === 200) {
+                alert("Product deleted successfully!");
+                window.location.reload();
+            }
+        } catch(err) {
+            console.error("error deleting the product: ",err);
+            alert("Failed to delete the product")
+        }
+    }
 
     return (
         <div className="bg-neutral-200 p-4 rounded-lg shadow-md flex flex-col justify-between">
@@ -34,18 +53,21 @@ export default function Product({_id, name, images, description, price}) {
             <div className="w-full">
                 <p className="text-lg font-bold my-2">${price.toFixed(2)}</p>
                 <button className="w-full text-white px-4 py-2 rounded-md bg-neutral-900"
-                    onClick = { () => navigate(`/product/${id}`)}>
-                    More info
+                onClick={handleEdit} >
+                    Edit
+                </button>
+                <button className="w-full text-white px-4 py-2 rounded-md bg-red-500"
+                onClick={handleDelete} >
+                    Delete
                 </button>
             </div>
         </div>
     );
 }
 
-Product.Proptypes = {
-    _id: Prototypes.string.isRequired,
+Myproduct.Proptypes = {
     name: Proptypes.string.isRequired,
     image: Proptypes.arrayOf(Proptypes.string).isRequired,
     description: Proptypes.string.isRequired,
-    price: Proptypes.number,
+    price: Proptypes.number.isRequired,
 }

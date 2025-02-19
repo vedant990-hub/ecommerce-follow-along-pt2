@@ -3,7 +3,9 @@ const Product = require('../model/product');
 const User = require('../model/user');
 const router = express.Router();
 const {pupload} = require('../multer')
-const path = require('path')
+const path = require('path');
+const { model } = require('mongoose');
+const mongoose = require('mongoose')
 const validateProductsData = (data) => {
     const errors = [];
 
@@ -175,5 +177,84 @@ router.delete('/delete-product/:id', async(req, res) => {
         res.status(500).json({error: "Server error. Could not delete the product."})
     }
 });
+
+router.post('/cart', async (req, res) => {
+    try{
+        const {userId, productId, quantity} = req.body;
+        const email = userId;
+
+        if(!email) {
+            return res.status(400).json({message: 'Email is required'});
+        }
+        if (! mongoose.Types.ObjectId.isValid(productId)) {
+            return res.status(400).json({message: "Invalid product Id"});
+        }
+
+        if(!quantity || quantity < 1) {
+            return res.status(400).json({message: "Quantity must be at least 1"});
+        }
+
+        const user = await User.findOne({email});
+
+        if(!user) {
+            return res.status(400).json({message: "User not found"});
+        }
+
+        const product = await Product.findById(productId);
+
+        if(!product) {
+            return res.status(400).json({message: "Product not found"});
+        }
+
+        const cartItemIndex = user.cart.findIndex(
+            (item) => item.productId.toString() === productId
+        );
+
+        if(cartItemIndex > -1) {
+            user.cart[cartItemIndex].quantity += quantity;
+        } else {
+            user.cart.push({productId, quantity});
+        }
+
+        await user.save();
+
+        res.status(200).json({
+            message: "Cart updated successfully",
+            cart: user.cart,
+        });
+    }
+    catch(error) {
+        console.error(error);
+        res.status(500).json({message: "Server error"});
+    }
+});
+
+//Get cart details endpoint
+
+router.get('/cartproducts', async (req,res) => {
+    try{
+        const {email} = req.query;
+
+        if(!email) {
+            return res.status(400).json({error: "Email query parameter is required"});
+        }
+
+        const user = await User.cart.findOne({email}).populate({
+            path: 'cart.productId',
+            model: 'Product'
+        });
+
+        if(!user) {
+            return res.status(404).json({error: 'User not found'});
+        }
+        res.status(200).json({
+            message: 'Cart retrieved successfully',
+            cart: user.cart
+        });
+    } catch(err) {
+        console.error('Server error', err);
+        res.status(500).json({error: 'Server Error'});
+    }
+})
 
 module.exports = router;

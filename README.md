@@ -692,6 +692,98 @@ With this update, users can now see their **selected products** in their cart, i
 
 ---
 
+Milestone 19: Cart Functionality
+Overview
+In this milestone, we implemented the cart functionality by creating a frontend UI for the cart page and developing backend endpoints to manage product quantities within the cart.
+
+Learning Goals 🎯
+By completing this milestone, we:
+
+Created a cart page to display products inside the cart using the endpoint built in Milestone 18.
+Implemented an option to increase and decrease the quantity of each product using + and - buttons.
+Developed backend endpoints to handle quantity adjustments for products in the cart.
+Implementation Details
+Frontend:
+Created a dedicated Cart Page to display all products added to the cart.
+Implemented dynamic UI components to show product details, prices, and quantity controls.
+Added + and - buttons to allow users to adjust the quantity of each product.
+Integrated API calls to fetch and update cart data dynamically.
+Backend:
+Created API endpoints to increase and decrease the quantity of a product in the cart.
+Updated the database to reflect changes in product quantities.
+Implemented validation checks to prevent negative quantities.
+How to Test
+Navigate to the cart page and verify that products appear correctly.
+Use the + and - buttons to adjust the quantity and observe real-time updates.
+Check the API responses to ensure correct updates to the database.
+Ensure the UI reflects changes made to the cart without requiring a page refresh.
+Conclusion
+With this milestone, we have successfully implemented a dynamic shopping cart system that allows users to manage product quantities seamlessly. This enhances user experience and lays the foundation for further enhancements like checkout functionality.
+
+🎉 Milestone 19 Completed! 🚀
+
+Milestone 20: Profile Page & User Data Endpoint
+Overview
+In this milestone, we implemented a profile page frontend and created a backend endpoint to retrieve user data.
+
+Key Features
+Backend Endpoint: Sends user data via email.
+Profile Page Frontend: Displays user details including profile photo, name, and email.
+Address Section:
+Shows user addresses.
+Displays "No address found" if no addresses exist.
+Includes an "Add Address" button for adding new addresses.
+This milestone enhances user profile management by integrating backend data retrieval and frontend rendering. 🚀
+
+Milestone 21: Address Input Form
+Overview
+In this milestone, we created a frontend page for address input that allows users to enter and store their address details. The form includes fields for country, city, address lines, zip code, and address type.
+
+Learning Goals 🎯
+By completing this milestone, you have:
+
+Created a frontend form to collect address details.
+Implemented state management to store the input address.
+Set up navigation from the profile page to the address form page.
+Gained a deeper understanding of handling user inputs in forms.
+Features
+User Input Fields:
+Country
+City
+Address Line 1
+Address Line 2
+Zip Code
+Address Type (Home/Work/Other)
+State Management:
+The form data is stored in a state to handle user input dynamically.
+Navigation:
+Clicking "Add Address" on the profile page navigates to the address form page.
+Validation:
+Ensures required fields are filled before submission.
+Conclusion
+This milestone helped in understanding how to create a structured address input form, manage state effectively, and enable seamless navigation within a React application.
+
+Milestone 22: Address Storage Endpoint
+Overview
+In this milestone, we created a backend endpoint that receives the address details from the frontend and stores them inside the user's profile in the database.
+
+Learning Goals 🎯
+By completing this milestone, you have:
+
+Created a backend endpoint to handle address data.
+Implemented logic to add the address to the address array inside the user collection.
+Understood how to handle API requests and database updates.
+Features
+Endpoint Creation:
+Receives address data from the frontend form.
+Validates the address input before storing it.
+Database Integration:
+Adds the address to the address array in the user collection.
+Ensures the user profile is updated correctly.
+Error Handling:
+Returns appropriate responses for success or failure cases.
+Conclusion
+This milestone helped in understanding how to create and integrate a backend API that stores user addresses in the database. The knowledge gained will be useful for handling user profiles dynamically in future projects.
 
 
 

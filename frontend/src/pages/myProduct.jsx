@@ -1,50 +1,67 @@
-//eslint-disable-next-line
-import React, {useEffect, useState} from "react";
-import Myproduct from "../components/myProduct";
+import React, { useEffect, useState } from 'react';
+import MyProduct from '../components/myProducts';
+import Nav from '../components/Nav';
 
 export default function MyProducts() {
     const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(true); //for loading state
-    const [error, setError] = useState(null); // for error handling
-    const email = "dips@gmail.com";
-useEffect(() => {
-    fetch(`http://localhost:8000/api/v2/product/my-products?email=${email}`).then((res) => {
-        if(!res.ok) {
-            throw new Error(`HTTP error! status: ${res.status}`);
-        }
-        return res.json();
-    })
-    .then((data) => {
-        console.log("Api response", data);
-        setProducts(data.products);
-        setLoading(false);
-    })
-    .catch((err) => {
-        console.error("Error fetching products:",err);
-        setError(err.message);
-        setLoading(false);
-    });
-}, []);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const email = "coco@gmail.com"; 
 
-if(loading) {
-    return <div className="text-center text-white mt-10">Loading products...</div>
-}
+    useEffect(() => {
+        fetch(`http://localhost:8000/api/v2/product/my-products?email=${email}`)
+            .then((res) => {
+                if (!res.ok) {
+                    throw new Error(`Network response was not ok: ${res.status}`);
+                }
+                return res.json();
+            })
+            .then((data) => {
+                if (!data.products) {
+                    throw new Error("API response does not contain 'products'");
+                }
+                setProducts(data.products);
+                setLoading(false);
+            })
+            .catch((err) => {
+                console.error("Error fetching products:", err);
+                setError(err.message);
+                setLoading(false);
+            });
+    }, []);
 
-if(error) {
-    return <div className="text-center text-red-500 mt-10">Error: 
-    {error}</div>
-}
+    return (
+        <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+            <Nav />
+            <div className="container mx-auto px-4 py-8">
+                <h1 className="text-4xl font-bold text-gray-900 text-center mb-8">
+                    My Products
+                </h1>
 
-return (
-    <div
-        className="flex min-h-screen items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-12">
-        <h1 className="text-3xl text-center text-white py-6"><strong>Product Gallery</strong></h1>
-        <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-4 p-4">
-            {products.map((product) => (
-                <Myproduct key={product._id} {...product}/>
-            ))}
+                {loading && (
+                    <div className="flex justify-center items-center h-64">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                    </div>
+                )}
+
+                {error && (
+                    <div className="text-center text-red-600 bg-red-100 p-4 rounded-lg">
+                        Error: {error}
+                    </div>
+                )}
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {!loading && !error && products.length === 0 && (
+                        <div className="col-span-full text-center text-gray-600 py-12">
+                            No products found.
+                        </div>
+                    )}
+                    
+                    {products.map((product) => (
+                        <MyProduct key={product._id} {...product} />
+                    ))}
+                </div>
+            </div>
         </div>
-    </div>
-);
-    
+    );
 }

@@ -1,92 +1,134 @@
-const User = require("../model/user");
-const express = require("express");
-const path = require("path")
-const fs = require("fs");
-
+const express = require('express');
 const router = express.Router();
-const {upload} = require("../multer");
-const ErrorHandler = require("../utils/ErrorHandler");
-const catchAsyncErrors = require("../middleware/catchAsyncErrors");
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
-require("dotenv").config();
+const User = require('../model/user');
+const ErrorHandler = require('../utils/ErrorHandler');
+const { upload } = require('../multer');
+const catchAsyncErrors = require('../middleware/catchAsyncErrors');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
-// create user
-router.post("/create-user", upload.single("file"), catchAsyncErrors( async (req, res, next) => {
-    console.log("create user");
+// Create user
+router.post('/create-user', upload.single('file'), catchAsyncErrors(async (req, res, next) => {
     const { name, email, password } = req.body;
-    const userEmail = await User.findOne({ email });
-    if (userEmail) {
-        if (req.file){
-            const filePath = path.join(__dirname , "../uploads",req.file.filename) ;
-            try{
-                fs.unlinkSync(filePath);
-            }
-            catch (err){
-                console.log("Error removing file:",err);
-                return res.status(500).json({message:"Error removing file"});
-            }
-    
-        }
 
+    const userExists = await User.findOne({ email });
+    if (userExists) {
         return next(new ErrorHandler("User already exists", 400));
     }
 
-    let fileUrl ="";
-    if (req.file){
-        fileUrl = path.join("uploads", req.file.filename)   ;
-    }
     const hashedPassword = await bcrypt.hash(password, 10);
-    console.log("At Create", "Password:", password, "Hash:", )
+    
     const user = await User.create({
         name,
         email,
-        password,
-        avatar:{
+        password: hashedPassword,
+        avatar: {
             public_id: req.file?.filename || "",
-            url: fileUrl ,
-        },
+            url: req.file ? `/uploads/${req.file.filename}` : "",
+        }
     });
 
-console.log(user)
-res.status(201).json({ success : true , user });
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY || 'fallback_secret', {
+        expiresIn: '7d',
+    });
+
+    res.status(201).json({
+        success: true,
+        token,
+        user
+    });
 }));
 
-router.post("/login-user", catchAsyncErrors(async(req, res, next) =>{
-    console.log("Logging in user...");
+// Login user
+router.post('/login-user', catchAsyncErrors(async (req, res, next) => {
+    const { email, password } = req.body;
 
-    let{email , password} = req.body;
-    email = email;
-    password= password;
-    if (!email || !password){
-        return next(new ErrorHandler("Please enter both email and password", 400));
+    if (!email || !password) {
+        return next(new ErrorHandler("Please provide email and password", 400));
     }
-    const user_authen = await User.findOne({ email }).select("+password");
-    if (!user_authen) {
-        console.log("Invalid email or password");
-        return next(new ErrorHandler("No such email found. Please register first", 401));
+
+    const user = await User.findOne({ email }).select('+password');
+    console.log(user)
+    if (!user) {
+        return next(new ErrorHandler("Invalid email or password", 401));
     }
-    const isPasswordMatched = await bcrypt.compare(password, user_authen.password);
-    
-    console.log("Passoword matched result:", isPasswordMatched );
+    console.log(password)
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    console.log(isPasswordValid)
+    if (!isPasswordValid) {
+        return next(new ErrorHandler("Invalid email or password", 401));
+    }
 
-    console.log("At Auth- password", password, "Hash:", user_authen.password );
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY || 'fallback_secret', {
+        expiresIn: '7d',
+    });
 
-    if (!isPasswordMatched) {
-        console.log("Password mismatch");
-        return next(new ErrorHandler("Authentication failed , Invalid password.", 401));
+    res.status(200).json({
+        success: true,
+        token,
+        user: {
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            avatar: user.avatar
+        }
+    });
+}));
+
+// Get user profile
+router.get('/profile', catchAsyncErrors(async (req, res, next) => {
+    const { email } = req.query;
+    if (!email) {
+        return next(new ErrorHandler("Please provide an email", 400));
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+        return next(new ErrorHandler("User not found", 404));
     }
 
     res.status(200).json({
-        success : true ,
-        message : "Login successfully.",
-        user : {
-            id : user_authen._id ,
-            email : user_authen.email ,
-            name : user_authen.name ,
+        success: true,
+        user: {
+            name: user.name,
+            email: user.email,
+            phoneNumber: user.phoneNumber,
+            avatar: user.avatar
         },
-        });
-}))
+        addresses: user.addresses
+    });
+}));
 
+// Add address
+router.post('/add-address', catchAsyncErrors(async (req, res, next) => {
+    const { email, country, city, address1, address2, zipcode, addresstype } = req.body;
+
+    if (!email) {
+        return next(new ErrorHandler("Please provide an email", 400));
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+        return next(new ErrorHandler("User not found", 404));
+    }
+
+    user.addresses.push({
+        country,
+        city,
+        address1,
+        address2,
+        zipCode: zipcode,
+        addressType: addresstype
+    });
+
+    await user.save();
+
+    res.status(201).json({
+        success: true,
+        message: "Address added successfully",
+        addresses: user.addresses
+    });
+}));
 
 module.exports = router;

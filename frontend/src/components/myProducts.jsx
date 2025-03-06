@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-export default function Product({ _id, name, image, description, price }) {
+export default function MyProduct({ _id, name, image, description, price }) {
     const [currentIndex, setCurrentIndex] = useState(0);
     const navigate = useNavigate();
-    
+
     useEffect(() => {
         if (!image || image.length === 0) return;
         const interval = setInterval(() => {
@@ -13,9 +14,28 @@ export default function Product({ _id, name, image, description, price }) {
         }, 2000);
         return () => clearInterval(interval);
     }, [image]);
-    console.log(image, image[currentIndex])
+
     const currentImage = image && image.length > 0 ? image[currentIndex] : null;
     const imageUrl = currentImage ? `http://localhost:8000${currentImage}` : 'https://via.placeholder.com/400';
+
+    const handleEdit = () => {
+        navigate(`/product/${_id}`);
+    };
+
+    const handleDelete = async () => {
+        try {
+            const response = await axios.delete(
+                `http://localhost:8000/api/v2/product/delete-product/${_id}`
+            );
+            if (response.status === 200) {
+                alert("Product Deleted Successfully");
+                window.location.reload();
+            }
+        } catch (error) {
+            console.error(error);
+            alert("An error occurred while deleting the product");
+        }
+    };
 
     return (
         <div className="group relative bg-white rounded-2xl shadow-lg overflow-hidden transform transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl">
@@ -44,23 +64,35 @@ export default function Product({ _id, name, image, description, price }) {
                 </p>
                 
                 {/* Price Tag */}
-                <div className="mt-4 flex items-center justify-between">
+                <div className="mt-4">
                     <span className="text-2xl font-bold text-blue-600 group-hover:text-blue-700 transition-colors duration-300">
                         ${price.toFixed(2)}
                     </span>
                 </div>
 
-                {/* Button */}
-                <button
-                    onClick={() => navigate(`/productDetails/${_id}`)}
-                    className="mt-6 w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold
-                        transform transition-all duration-300
-                        hover:bg-blue-700 hover:shadow-lg
-                        active:scale-95
-                        focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                    View Details
-                </button>
+                {/* Action Buttons */}
+                <div className="mt-6 grid grid-cols-2 gap-4">
+                    <button
+                        onClick={handleEdit}
+                        className="bg-blue-600 text-white py-2 px-4 rounded-lg font-semibold
+                            transform transition-all duration-300
+                            hover:bg-blue-700 hover:shadow-lg
+                            active:scale-95
+                            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    >
+                        Edit
+                    </button>
+                    <button
+                        onClick={handleDelete}
+                        className="bg-red-600 text-white py-2 px-4 rounded-lg font-semibold
+                            transform transition-all duration-300
+                            hover:bg-red-700 hover:shadow-lg
+                            active:scale-95
+                            focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                    >
+                        Delete
+                    </button>
+                </div>
             </div>
 
             {/* Image Indicators */}
@@ -82,9 +114,9 @@ export default function Product({ _id, name, image, description, price }) {
     );
 }
 
-Product.propTypes = {
-    name: PropTypes.string.isRequired,
+MyProduct.propTypes = {
     _id: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
     image: PropTypes.arrayOf(PropTypes.string).isRequired,
     description: PropTypes.string.isRequired,
     price: PropTypes.number.isRequired,

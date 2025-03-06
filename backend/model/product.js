@@ -1,72 +1,52 @@
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
 
 const productSchema = new mongoose.Schema({
-    name:{
+    name: {
         type: String,
-        required: [true, "Provide the product name"],
+        required: [true, "Please enter the product name!"],
     },
-
-    description:{
+    description: {
         type: String,
-        required:[true, "[Please provide the description of the product"],
+        required: [true, "Please enter a product description!"],
     },
-
-    category:{
+    category: {
         type: String,
-        required:[true, "[Please provide the product category"],
+        required: [true, "Please select a product category!"],
     },
-
-    tags:{
-        type: [String], //array of tags
-        default: [],
-    },
-
-    price:{
-        type: Number,
-        required: [true, "Please provide the product price"],
-    },
-
-    stock:{
-        type: Number,
-        require: [true, "Please provide the product stock"],
-    },
-
-    images:{
+    tags: {
         type: [String],
-        required: [true, "Please upload product images"],
+        required: [true, "Please enter product tags!"],
     },
-
-    email:{
+    price: {
+        type: Number,
+        required: [true, "Please enter the product price!"],
+    },
+    stock: {
+        type: Number,
+        required: [true, "Please enter the product stock!"],
+    },
+    image: {
+        type: [String],
+        required: [true, "Please upload product images!"],
+    },
+    email: {
         type: String,
-        required: [true, "Please provide you email id"],
-        match: [/.+@.+\..+/, "Please provide a valid email address"],
-    },
+        required: [true, "Please enter the product owner's email!"],
+        match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Please enter a valid email address!"]
 
-    createdAt:{
+    },
+    createdAt: {
         type: Date,
         default: Date.now,
     },
+    updatedAt: {
+        type: Date,
+    },
 
-    cart: [
-            {
-                    productId: {
-                        type: String,
-                        ref: "Product",
-                        required: true,
-                        unique: true,
-                    },
-                    quantity: {
-                        type: Number,
-                        required: true,
-                        min: [0, "Quantity cannot be less than 1"],
-                    },
-                },
-            ],
-        },
 
-{
-    timestamps: true,
-}
-);
+},
+    {
+        timestamps: true,
+    });
 
 module.exports = mongoose.model("Product", productSchema);

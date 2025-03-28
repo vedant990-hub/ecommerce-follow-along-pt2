@@ -1,29 +1,29 @@
-//eslint-disable-next-line
-import React from 'react';
-import { BrowserRouter,Routes,Route } from 'react-router-dom';
 import './App.css'
-import { Home,Login,SignupPage,CreateProduct,MyProducts,Cart,ProductDetails,Profile,CreateAddress} from './Routes/route.js';
-
+import { BrowserRouter , Routes, Route } from "react-router-dom";
+import {LoginPage, SignupPage, Home, CreateProduct, MyProducts  , Cart, ProductDetails,Profile} from './Routes/route.js';
 
 
 const App = () => {
   return (
     <BrowserRouter>
-      <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<SignupPage />} />
-      <Route path="/product" element={<CreateProduct />} />
-      <Route path="/product/:id" element={<CreateProduct />} />
-      <Route path="/myproducts" element={<MyProducts />} />
-      <Route path="/cart" element={<Cart />} />
-      <Route path="/productDetails/:id" element={<ProductDetails />} />
-      <Route path="/profile" element={<Profile />} />
-      <Route path="/create-address" element={<CreateAddress />} />
+    <Routes>
+      <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage/>}></Route>
+      <Route path="/" element={<Home/>}></Route>
+      <Route path="/product" element={<CreateProduct/>}/>
+      <Route path="/product/:id" element={<CreateProduct/>}/>
+        <Route path="/myProduct" element={<MyProducts/>}/>
+      <Route path='/cart' element={<Cart/>}/>
+      <Route path='/productDetails' element={<ProductDetails/>}/>
+      <Route path='/profile' element={<Profile/>}/>
+      <Route path='/CreateAdress' element={<Profile/>}/>
+      <Route path='/selectAdresses' element={<Profile/>}/>
+      <Route path='/orderConfirmation' element={<Profile/>}/>
+      <Route path='/myOrder' element={<Profile/>}/>
 
-      </Routes>
-    </BrowserRouter>
-  );
+    </Routes>
+    </BrowserRouter>  
+  )
 }
 
 export default App;

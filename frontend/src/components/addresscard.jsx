@@ -1,60 +1,89 @@
-import PropTypes from "prop-types";
+// eslint-disable-next-line react/prop-types
+import Proptypes from "prop-types";
 
 export default function AddressCard({
-    country,
-    city,
-    address1,
-    address2,
-    zipCode,
-    addressType,
-}) {
+                                        country,
+                                        city,
+                                        address1,
+                                        address2,
+                                        zipCode,
+                                        // eslint-disable-next-line react/prop-types
+                                        addressType,
+                                    }){
     return (
-        <div className="bg-white rounded-xl shadow-md overflow-hidden transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-            <div className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                    <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
-                        {addressType}
-                    </span>
+        <div className="w-full h-max bg-transparent p-5 rounded-lg border border-neutral-600 grid grid-cols-12 gap-5">
+            <div className="col-span-12 sm:col-span-6 md:col-span-4 lg:col-span-3 xl:col-span-2">
+                <div className="w-full h-max bg-neutral-700 rounded-lg flex flex-col gap-y-2">
+                    <div className="w-full h-max break-all text-xl text-neutral-200">
+                        Country
+                    </div>
+                    <div className="w-full h-max break-all text-lg font-light text-neutral-200">
+                        {country}
+                    </div>
                 </div>
-
-                <div className="space-y-4">
-                    <div>
-                        <h3 className="text-sm font-medium text-gray-500">Country</h3>
-                        <p className="mt-1 text-lg text-gray-900">{country}</p>
-                    </div>
-
-                    <div>
-                        <h3 className="text-sm font-medium text-gray-500">City</h3>
-                        <p className="mt-1 text-lg text-gray-900">{city}</p>
-                    </div>
-
-                    <div>
-                        <h3 className="text-sm font-medium text-gray-500">Address Line 1</h3>
-                        <p className="mt-1 text-lg text-gray-900">{address1}</p>
-                    </div>
-
-                    {address2 && (
-                        <div>
-                            <h3 className="text-sm font-medium text-gray-500">Address Line 2</h3>
-                            <p className="mt-1 text-lg text-gray-900">{address2}</p>
+            </div>
+            <div className="w-full h-max bg-transparent p-5 rounded-lg border border-neutral-600 grid grid-cols-12 gap-5">
+                <div className="col-span-12 sm:col-span-6 md:col-span-4 lg:col-span-3 xl:col-span-2">
+                    <div className="w-full h-max bg-neutral-700 rounded-lg flex flex-col gap-y-2">
+                        <div className="w-full h-max break-all text-xl text-neutral-200">
+                            City
                         </div>
-                    )}
-
-                    <div>
-                        <h3 className="text-sm font-medium text-gray-500">ZIP Code</h3>
-                        <p className="mt-1 text-lg text-gray-900">{zipCode}</p>
+                        <div className="w-full h-max break-all text-lg font-light text-neutral-200">
+                            {city}
+                        </div>
+                    </div>
+                </div>
+                <div className="col-span-12 sm:col-span-6 md:col-span-4 lg:col-span-3 xl:col-span-2">
+                    <div className="w-full h-max bg-neutral-700 rounded-lg flex flex-col gap-y-2">
+                        <div className="w-full h-max break-all text-xl text-neutral-200">
+                            Address 1
+                        </div>
+                        <div className="w-full h-max break-all text-lg font-light text-neutral-200">
+                            {address1}
+                        </div>
+                    </div>
+                </div>
+                <div className="col-span-12 sm:col-span-6 md:col-span-4 lg:col-span-3 xl:col-span-2">
+                    <div className="w-full h-max bg-neutral-700 rounded-lg flex flex-col gap-y-2">
+                        <div className="w-full h-max break-all text-xl text-neutral-200">
+                            Address 2
+                        </div>
+                        <div className="w-full h-max break-all text-lg font-light text-neutral-200">
+                            {address2}
+                        </div>
+                    </div>
+                </div>
+                <div className="col-span-12 sm:col-span-6 md:col-span-4 lg:col-span-3 xl:col-span-2">
+                    <div className="w-full h-max bg-neutral-700 rounded-lg flex flex-col gap-y-2">
+                        <div className="w-full h-max break-all text-xl text-neutral-200">
+                            Zip Code
+                        </div>
+                        <div className="w-full h-max break-all text-lg font-light text-neutral-200">
+                            {zipCode}
+                        </div>
+                    </div>
+                </div>
+                <div className="col-span-12 sm:col-span-6 md:col-span-4 lg:col-span-3 xl:col-span-2">
+                    <div className="w-full h-max bg-neutral-700 rounded-lg flex flex-col gap-y-2">
+                        <div className="w-full h-max break-all text-xl text-neutral-200">
+                            Address Type
+                        </div>
+                        <div className="w-full h-max break-all text-lg font-light text-neutral-200">
+                            {addressType}
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    );
+    )
 }
 
-AddressCard.propTypes = {
-    country: PropTypes.string.isRequired,
-    city: PropTypes.string.isRequired,
-    address1: PropTypes.string.isRequired,
-    address2: PropTypes.string,
-    zipCode: PropTypes.number.isRequired,
-    addressType: PropTypes.string.isRequired,
-};
+AddressCard.proptypes = {
+    _id: Proptypes.string.isRequired,
+    country: Proptypes.string.isRequired,
+    city: Proptypes.string.isRequired,
+    address1: Proptypes.string.isRequired,
+    address2: Proptypes.string.isRequired,
+    zipCode: Proptypes.string.isRequired,
+    addressType: Proptypes.string.isRequired,
+}

@@ -1,46 +1,19 @@
-const express = require('express');
-const cors = require('cors');
-const mongoose = require('mongoose');
-const path = require('path');
-const productRoutes = require('./controller/product');
-const userRoutes = require('./controller/user');
-const errorHandler = require('./middleware/error');
+const app = require("./app");
+const connectDatabase = require("./db/Database");
 
-const app = express();
-const port = process.env.PORT || 8000;
+process.on("uncaughtException", (err)=>{
+    console.log(`Error: ${err.message}`);
+    console.log(`Shutting down server`);
+});
 
-// Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+if(process.env.NODE_ENV !== "PRODUCTION"){
+    require("dotenv").config({
+        path: "config/.env",
+    });
+};
 
-// Static files
-app.use('/products', express.static(path.join(__dirname, 'products')));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+connectDatabase();
 
-// Routes
-app.use('/api/v2/user', userRoutes);
-app.use('/api/v2/product', productRoutes);
-
-// Error handling
-app.use(errorHandler);
-
-// MongoDB Connection
-const mongoURI = process.env.MONGODB_URI || 'mongodb+srv://heramb:inamke@cluster0.wycsh.mongodb.net/test?retryWrites=true&w=majority&tls=true';
-mongoose.connect(mongoURI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
+const server = app.listen(process.env.PORT, ()=>{
+    console.log(`Server is running on https://localhost:${process.env.PORT}`);
 })
-.then(() => console.log("✅ Database connection successful"))
-.catch((err) => console.error("❌ Database connection error:", err));
-
-// Health check route
-app.get('/', (_req, res) => {
-  res.send("Welcome to backend");
-});
-
-app.listen(port, () => {
-  console.log(`🚀 Server running at http://localhost:${port}`);
-});
-
-module.exports = app;

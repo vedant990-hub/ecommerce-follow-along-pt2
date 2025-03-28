@@ -1,52 +1,45 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose')
 
-const productSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: [true, "Please enter the product name!"],
-    },
-    description: {
-        type: String,
-        required: [true, "Please enter a product description!"],
-    },
-    category: {
-        type: String,
-        required: [true, "Please select a product category!"],
-    },
-    tags: {
-        type: [String],
-        required: [true, "Please enter product tags!"],
-    },
-    price: {
-        type: Number,
-        required: [true, "Please enter the product price!"],
-    },
-    stock: {
-        type: Number,
-        required: [true, "Please enter the product stock!"],
-    },
-    image: {
-        type: [String],
-        required: [true, "Please upload product images!"],
-    },
-    email: {
-        type: String,
-        required: [true, "Please enter the product owner's email!"],
-        match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Please enter a valid email address!"]
+    const productSchema = new mongoose.Schema({
+        name:{
+            type: String,
+            required: [true, "Provide the name of the product"],
+        },
+        description: {
+            type: String,
+            required: [true, "Provide the description of the product"],
+        },
+        category: {
+            type: String,
+            required: [true, "Provide the category of the product"],
+        },
+        tags: {
+            type: [String],
+            default: [],
+        },
+        price: {
+            type: Number,
+            required: [true, "Provide the price of the product"],
+        },
+        stock: {
+            type: Number,
+            required: [true, "Provide the stock of the product"],
+        },
+        images: {
+            type: [String],
+            required: [true, "Provide at least one image for the product"],
+        },
+        email: {
+            type: String,
+            required: [true, "Provide the email of the product owner"],
+            unique: true,
+            match: [/.+@.+\..+/, "Provide a valid email address"],
+        },
+        createdAt: {
+            type: Date,
+            default: Date.now,
+        },        
+        },
+        {timestamps: true})
 
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now,
-    },
-    updatedAt: {
-        type: Date,
-    },
-
-
-},
-    {
-        timestamps: true,
-    });
-
-module.exports = mongoose.model("Product", productSchema);
+module.exports = mongoose.model('Product', productSchema)

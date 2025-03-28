@@ -1,213 +1,224 @@
-const express = require('express');
-const router = express.Router();
-const Product = require('../model/product');
-const User = require('../model/user');
-const { pupload } = require('../multer');
-const ErrorHandler = require('../utils/ErrorHandler');
-const catchAsyncErrors = require('../middleware/catchAsyncErrors');
-const { isAuthenticated } = require('../middleware/auth');
+const express = require("express");
+const mongoose = require("mongoose");  // ✅ Added mongoose
+const path = require("path"); 
+const Product = require("../model/product");
+const User = require("../model/userModel");  
+const { pupload } = require("../middleware/multer");
 
-// Validation helper
+const router = express.Router();
+
 const validateProductData = (data) => {
     const errors = [];
-    if (!data.name) errors.push("Please enter the product name!");
-    if (!data.description) errors.push("Please enter the product description!");
-    if (!data.category) errors.push("Please enter the product category!");
-    if (!data.price || isNaN(data.price) || data.price <= 0) errors.push("Please enter a valid price!");
-    if (!data.stock || isNaN(data.stock) || data.stock <= 0) errors.push("Please enter valid stock!");
-    if (!data.email) errors.push("Please enter a valid email address!");
+
+    if (!data.name) errors.push("Product name is required");
+    if (!data.description) errors.push("Product description is required");
+    if (!data.category) errors.push("Product category is required");
+    if (!data.price) errors.push("Product price is required");
+    if (!data.stock) errors.push("Product stock is required");
+    if (!data.email) errors.push("Product email is required");
+
     return errors;
 };
 
-// Create product
-router.post('/create-product', pupload.array('images', 10), catchAsyncErrors(async (req, res) => {
+// ✅ CREATE PRODUCT
+router.post('/create-product', pupload.array('images', 10), async (req, res) => {
     const { name, description, category, tags, price, stock, email } = req.body;
-    
-    const image = req.files.map(file => `/products/${file.filename}`);
-    
-    const validationErrors = validateProductData({ name, description, category, tags, price, stock, email });
+    const images = req.files.map((file) => file.path);
+
+    const validationErrors = validateProductData({ name, description, category, price, stock, email });
     if (validationErrors.length > 0) {
         return res.status(400).json({ errors: validationErrors });
     }
 
-    const user = await User.findOne({ email });
-    if (!user) {
-        return res.status(404).json({ error: "User not found!" });
+    if (images.length === 0) {
+        return res.status(400).json({ errors: "At least one image is required" });
     }
 
-    const product = await Product.create({
-        name,
-        description,
-        category,
-        tags,
-        price,
-        stock,
-        email,
-        image,
-        user: user._id
-    });
+    try {
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ errors: "User not found" });
+        }
 
-    res.status(201).json({
-        success: true,
-        product
-    });
-}));
+        const newProduct = new Product({
+            name, description, category, tags, price, stock, images,
+        });
+        await newProduct.save();
 
-// Get all products
-router.get('/get-products', catchAsyncErrors(async (req, res) => {
-    const products = await Product.find().sort({ createdAt: -1 });
-    res.status(200).json({
-        success: true,
-        products
-    });
-}));
-
-// Get user's products
-router.get('/my-products', catchAsyncErrors(async (req, res) => {
-    const { email } = req.query;
-    if (!email) {
-        return res.status(400).json({ error: "Email is required!" });
-    }
+        res.status(201).json({
+            message: "Product created successfully",
+            product: newProduct,
+        });
     
-    const products = await Product.find({ email }).sort({ createdAt: -1 });
-    res.status(200).json({
-        success: true,
-        products
-    });
-}));
-
-// Get single product
-router.get('/product/:id', catchAsyncErrors(async (req, res) => {
-    const product = await Product.findById(req.params.id);
-    if (!product) {
-        return res.status(404).json({ error: "Product not found!" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ errors: "Server error" });
     }
-    
-    res.status(200).json({
-        success: true,
-        product
-    });
-}));
+});
 
-// Update product
-router.put('/update-product/:id', pupload.array('images', 10), catchAsyncErrors(async (req, res) => {
+// ✅ GET PRODUCT BY ID
+router.get('/products/:id', async (req, res) => {
+    try {
+        const product = await Product.findById(req.params.id);
+        if (!product) {
+            return res.status(404).json({ errors: "Product not found" });
+        }
+        res.status(200).json(product);
+    } catch (error) {
+        console.error("Server error", error);
+        res.status(500).json({ errors: "Server error" });
+    }
+});
+
+// ✅ UPDATE PRODUCT
+router.put('/update-product/:id', pupload.array('images', 10), async (req, res) => {
+    const { id } = req.params;
     const { name, description, category, tags, price, stock, email } = req.body;
-    
-    let product = await Product.findById(req.params.id);
-    if (!product) {
-        return res.status(404).json({ error: "Product not found!" });
+
+    try {
+        const existingProduct = await Product.findById(id);
+        if (!existingProduct) {
+            return res.status(404).json({ errors: "Product not found" });
+        }
+        
+        let updatedImages = existingProduct.images;
+        if (req.files && req.files.length > 0) {
+            updatedImages = req.files.map((file) => `products/${path.basename(file.path)}`);
+        }
+
+        const validateErrors = validateProductData({
+            name, description, category, price, stock, email
+        });
+
+        if (validateErrors.length > 0) {
+            return res.status(400).json({ errors: validateErrors });
+        }
+
+        Object.assign(existingProduct, { name, description, category, tags, price, stock, email, images: updatedImages });
+
+        await existingProduct.save();
+
+        res.status(200).json({
+            message: "Product updated successfully",
+            product: existingProduct,
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ errors: "Server error" });
     }
+});
 
-    if (req.files && req.files.length > 0) {
-        const image = req.files.map(file => `/products/${file.filename}`);
-        product.image = image;
+// ✅ DELETE PRODUCT
+router.delete('/delete-product/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const existingProduct = await Product.findById(id);
+        if (!existingProduct) {
+            return res.status(404).json({ errors: "Product not found" });
+        }
+
+        await Product.deleteOne({ _id: id });  // ✅ Fixed deprecated remove() method
+
+        res.status(200).json({ message: "Product deleted successfully" });
+    } catch (err) {
+        console.error("Server error", err);
+        res.status(500).json({ errors: "Server error" });
     }
+});
 
-    product.name = name;
-    product.description = description;
-    product.category = category;
-    product.tags = tags;
-    product.price = price;
-    product.stock = stock;
-    product.email = email;
+// ✅ ADD TO CART
+router.post('/cart', async (req, res) => {
+    try {
+        const { userId, productId, quantity } = req.body;
+        const email = userId;
 
-    await product.save();
+        if (!email) return res.status(400).json({ message: "Email is required" });
 
-    res.status(200).json({
-        success: true,
-        product
-    });
-}));
+        if (!mongoose.Types.ObjectId.isValid(productId)) {
+            return res.status(400).json({ message: "Invalid productId" });
+        }
 
-// Delete product
-router.delete('/delete-product/:id', catchAsyncErrors(async (req, res) => {
-    const product = await Product.findById(req.params.id);
-    if (!product) {
-        return res.status(404).json({ error: "Product not found!" });
+        if (!quantity || quantity < 1) {
+            return res.status(400).json({ message: "Quantity should be more than 1" });
+        }
+
+        const user = await User.findOne({ email });
+        if (!user) return res.status(400).json({ message: "User not found" });
+
+        const product = await Product.findById(productId);
+        if (!product) return res.status(404).json({ message: "Product not found" });
+
+        const cartItemIndex = user.cart.findIndex(item => item.productId.toString() === productId);
+
+        if (cartItemIndex > -1) {
+            user.cart[cartItemIndex].quantity += quantity;
+        } else {
+            user.cart.push({ productId, quantity });
+        }
+
+        await user.save();
+
+        res.status(200).json({ message: "Cart updated successfully" });
+
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ error: "Server error" });
     }
+});
 
-    await product.deleteOne();
-    res.status(200).json({
-        success: true,
-        message: "Product deleted successfully!"
-    });
-}));
+// ✅ GET CART PRODUCTS
+router.get('/cartproducts', async (req, res) => {
+    try {
+        const { email } = req.query;
 
-// Get cart products
-router.get('/cartproducts', catchAsyncErrors(async (req, res) => {
-    const { email } = req.query;
-    if (!email) {
-        return res.status(400).json({ error: "Email is required!" });
+        if (!email) return res.status(400).json({ error: "Email query parameter is required" });
+
+        const user = await User.findOne({ email }).populate({
+            path: 'cart.productId',
+            model: 'Product'
+        });
+
+        if (!user) return res.status(404).json({ error: 'User not found' });
+
+        res.status(200).json({
+            message: 'Cart retrieved successfully',
+            cart: user.cart
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Server error" });
     }
+});
 
-    const user = await User.findOne({ email }).populate('cart.productId');
-    if (!user) {
-        return res.status(404).json({ error: "User not found!" });
-    }
-
-    res.status(200).json({
-        success: true,
-        cart: user.cart
-    });
-}));
-
-// Add to cart
-router.post('/cart', catchAsyncErrors(async (req, res) => {
-    const { userId, productId, quantity } = req.body;
-    
-    const user = await User.findOne({ email: userId });
-    if (!user) {
-        return res.status(404).json({ error: "User not found!" });
-    }
-
-    const product = await Product.findById(productId);
-    if (!product) {
-        return res.status(404).json({ error: "Product not found!" });
-    }
-
-    const cartItemIndex = user.cart.findIndex(
-        item => item.productId.toString() === productId
-    );
-
-    if (cartItemIndex > -1) {
-        user.cart[cartItemIndex].quantity += quantity;
-    } else {
-        user.cart.push({ productId, quantity });
-    }
-
-    await user.save();
-    res.status(200).json({
-        success: true,
-        message: "Product added to cart successfully!",
-        cart: user.cart
-    });
-}));
-
-// Update cart product quantity
-router.put('/cartproduct/quantity', catchAsyncErrors(async (req, res) => {
+// ✅ UPDATE CART PRODUCT QUANTITY
+router.put('/cartproduct/quantity', async (req, res) => {
     const { email, productId, quantity } = req.body;
-    
-    const user = await User.findOne({ email });
-    if (!user) {
-        return res.status(404).json({ error: "User not found!" });
+
+    if (!email || !productId || quantity === undefined) {
+        return res.status(400).json({ error: "Email, productId, and quantity are required" });
     }
 
-    const cartItemIndex = user.cart.findIndex(
-        item => item.productId.toString() === productId
-    );
+    try {
+        const user = await User.findOne({ email });
 
-    if (cartItemIndex === -1) {
-        return res.status(404).json({ error: "Product not found in cart!" });
+        if (!user) return res.status(404).json({ error: "User not found" });
+
+        const cartProduct = user.cart.find(item => item.productId.toString() === productId);
+
+        if (!cartProduct) return res.status(404).json({ error: "Product not found in cart" });
+
+        cartProduct.quantity = quantity;
+        await user.save();
+
+        res.status(200).json({ message: "Cart product quantity updated successfully" });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Server error" });
     }
-
-    user.cart[cartItemIndex].quantity = quantity;
-    await user.save();
-
-    res.status(200).json({
-        success: true,
-        message: "Cart updated successfully!",
-        cart: user.cart
-    });
-}));
+});
 
 module.exports = router;

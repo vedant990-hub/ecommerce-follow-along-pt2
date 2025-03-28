@@ -1,28 +1,29 @@
-const express = require("express");
-const app = express();
-const bodyParser = require("body-parser");
-const cors = require("cors");
-const errorHandler = require("./middleware/error");
-app.use(errorHandler);
-const path = require("paths");
+const express =require('express')
+const app=express()
+const user=require('./controller/user')
+const product=require('./controller/product')
+const orders = require('./controller/order');
+const bodyParser=require("body-parser")
+const cors=require("cors")
+const ErrorHandler=require("./middleware/error")
+const path = require('path');
+app.use(express.json())
+app.use(express.urlencoded({extended:true}))
+app.use(cors())
+app.use(ErrorHandler)
+app.use("/api/v2/user",user)
+app.use("/api/v2/product", product);
+app.use("/api/v2/orders",orders);
 
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// Use CORS middleware
-app.use(cors());
-
-//app.use('/product',express.static(path.join(__dirname, 'products')));
-
-if (process.env.NODE_ENV !== "PRODUCTION") {
-  require("dotenv").config({
-    path: "backend/config/.env",
-  });
+if(process.env.NODE_ENV !== "PRODUCTION"){
+    require("dotenv").config({
+        path: "BACKEND/config/.env"
+    })
 }
 
-app.get("/", (_req, res) => {
-  return res.send("Welcome to backend");
-});
+app.get('/',(req,res)=>{
+    return res.send('Welcome to backend ')
+})
 
 module.exports=app;

@@ -510,3 +510,46 @@ Update the UI to reflect the canceled order status.
 🎯 Conclusion
 This milestone enhances the My Orders page by allowing users to cancel their orders when needed. It helps in understanding how to modify order statuses and manage data updates dynamically.
 
+### **Milestone 29: 💰 PayPal Integration for Online Payments**  
+
+#### **🌟 Overview**  
+The PayPal integration allows users to make online payments securely. This milestone involves setting up PayPal for test transactions and integrating it into the order confirmation page.  
+
+#### **✨ Features**  
+💳 Add PayPal as a payment option on the Order Confirmation page.  
+💵 Provide users with two payment methods:  
+   - **Cash on Delivery (COD)**  
+   - **Online Payment using PayPal**  
+🛠️ Dynamically display PayPal payment buttons when Online Payment is selected.  
+
+#### **📝 Implementation Steps**  
+
+### **🔧 Set Up PayPal Developer Account**  
+1️⃣ **Create a PayPal Developer Account**  
+   - Go to the [PayPal Developer Dashboard](https://developer.paypal.com/).  
+   - Sign up or log in to access developer tools.  
+
+2️⃣ **Set Up a Sandbox Account**  
+   - Navigate to the **Sandbox Accounts** section.  
+   - Use the provided test account for development purposes.  
+   - Copy the **User ID** of the sandbox account for later use.  
+   - Locate and copy the **Client ID** from the sandbox account details.  
+
+### **🖥️ Update Order Confirmation Page**  
+📌 **Add Payment Options**  
+   - Add **radio buttons** to let users choose between **COD** and **PayPal Payment**.  
+   - If **Online Payment** is selected, dynamically show the **PayPal buttons**.  
+
+### **🔄 Integrate PayPal with Backend**  
+🛠 **Create Payment Endpoint**  
+   - Develop a new **POST** endpoint: `/process-payment`.  
+   - Receive transaction details and verify payment with PayPal API.  
+   - Update the order status to **"Paid"** upon successful payment.  
+
+### **✅ Handle Payment Response**  
+🔗 **Integrate PayPal SDK**  
+   - Use the PayPal SDK to handle transactions securely.  
+   - Display payment confirmation on successful transactions.  
+
+### **🎯 Conclusion**  
+This milestone enhances the order process by enabling **secure online payments** via PayPal. It also provides flexibility by offering both **COD** and **online payment options**, improving user experience. 🚀

@@ -607,3 +607,39 @@ This step brought strong authentication into play — essential for any real-wor
 ---
 
 Let me know if you'd like a single file/README version or visual icons for each milestone too!
+
+
+
+Milestone 34: Validating JWT Tokens from Cookies
+🛡️ JWT Token Validation for Protected Routes
+
+🌟 Overview
+
+This milestone focuses on securing your application by validating the JWT tokens stored in cookies. You’ll ensure only authenticated users can access certain pages, forming the backbone of protected routes and user-based access control.
+
+✨ Features
+
+🍪 Extract JWT token from the browser cookie.
+🔍 Send the token to the backend for validation.
+✅ Middleware checks token authenticity and validity.
+🚫 Prevents access to routes without proper authentication.
+
+📝 Implementation Steps
+
+🔍 Get Token from Cookie
+
+📨 Send Token to Backend
+
+🧠 Create JWT Middleware
+
+🚫 Redirect Unauthorized Users
+If token verification fails, redirect the user to the login page or return a 401 Unauthorized response.
+
+🚀 Next Steps
+With token validation in place, you’re now ready to implement full session management and user-specific pages with robust access control.
+
+Milestone 35: Deplyoment link 
+
+Backend Deployment Link: https://ecom-codealong.onrender.com/
+
+Frontend Deployment Link: https://ecom-code-along-55px.vercel.app/
